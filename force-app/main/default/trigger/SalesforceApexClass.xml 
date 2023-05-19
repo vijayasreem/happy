@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexTrigger xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>47.0</apiVersion>
+    <status>Active</status>
+    <triggerName>User_Story__c</triggerName>
+    <triggerOperation>after insert, before update, after delete</triggerOperation>
+    <source>
+        List&lt;String&gt; folderStructure = new List&lt;String&gt;{'FE', 'BE', 'Apex Classes', 'LWC Components', 'Unit tests', 'AWS Lambda'};
+        String rootFolderName = 'User Story Execution';
+        String rootFolderId = createRootFolder(rootFolderName);
+
+        // Create multiple components
+        List&lt;String&gt; components = new List&lt;String&gt;{'Custom Objects', 'LWC Components', 'Apex Classes'};
+        for(String component: components) {
+            String componentFolderId = createFolder(component, rootFolderId);
+            createComponents(componentFolderId);
+        }
+
+        // Connectivity between components
+        List&lt;String&gt; lwcComponents = getLWCComponents();
+        for(String lwcComponent: lwcComponents) {
+            // Connect lwc components to apex classes
+            connectLWCComponentToApexClass(lwcComponent);
+        }
+
+        // Unit tests implementation
+        createUnitTests();
+
+        // Deployment process
+        List&lt;String&gt; projectFiles = new List&lt;String&gt;{'Custom Objects', 'LWC Components', 'Apex Classes', 'Unit tests'};
+        deployProject(projectFiles);
+
+        // Deployment of AWS Lambda
+        deployAWSLambda();
+
+        // Application access for pilot testing
+        grantApplicationAccess();
+    </source>
+</ApexTrigger>
